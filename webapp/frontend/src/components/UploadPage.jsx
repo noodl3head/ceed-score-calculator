@@ -196,6 +196,45 @@ const UploadPage = ({ onScoreCalculated }) => {
           </div>
         </div>
 
+        {/* How Score is Calculated Section */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">How Your Score is Calculated</h2>
+          <div className="space-y-4 text-gray-700">
+            <p className="leading-relaxed">
+              Our tool reads your response sheet PDF and automatically calculates your score in three simple steps:
+            </p>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Extract Your Responses</h3>
+                  <p className="text-sm text-gray-600">We read the PDF and extract all your answers for each question.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Match with Answer Key</h3>
+                  <p className="text-sm text-gray-600">Your answers are compared with the official answer key to check if they're correct.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Calculate Score</h3>
+                  <p className="text-sm text-gray-600">Points are awarded based on the marking scheme: +4 for NAT, +4/-1 for MSQ, and +3/-0.5 for MCQ.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* How to Download Section */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">

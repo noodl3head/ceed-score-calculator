@@ -196,6 +196,76 @@ const ResultsPage = ({ scoreData, onReset }) => {
           </div>
         </div>
 
+        {/* How Score is Calculated - Detailed Section */}
+        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">How Your Score Was Calculated</h2>
+          <div className="space-y-6 text-gray-700">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Step 1: Parsing Your Response Sheet</h3>
+              <p className="text-sm leading-relaxed">
+                First, we read your PDF file and extract the text from every page. We look for question numbers, 
+                your chosen options, answers, and the status of each question (whether you attempted it or not). 
+                This is done using smart text recognition.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Step 2: Organizing Questions</h3>
+              <p className="text-sm leading-relaxed mb-2">
+                Here's where it gets tricky - your response sheet PDF shows questions in a different order than 
+                the actual question paper! This is because every student gets a shuffled version to prevent copying. 
+                The PDF might show Q1, Q2, Q3... but they're not in the same sequence as the original paper.
+              </p>
+              <p className="text-sm leading-relaxed">
+                To solve this, we don't rely on the question numbers in your PDF. Instead, we look at the actual 
+                question text and match it with the original question paper. We search for specific phrases and 
+                patterns from each question to figure out which question from the paper (Q1 to Q44) it actually is. 
+                This way, we correctly map your answers to the right questions, no matter how shuffled they are.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Step 3: Comparing with Answer Key</h3>
+              <p className="text-sm leading-relaxed">
+                We then compare your answers with the official answer key. For each question, we check if your 
+                answer matches the correct answer. This tells us which questions you got right, which ones you 
+                got wrong, and which ones you didn't attempt.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Step 4: Applying Marking Scheme</h3>
+              <p className="text-sm leading-relaxed mb-3">
+                Finally, we calculate your score based on the official marking scheme for each type of question:
+              </p>
+              <div className="space-y-2 ml-4">
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="font-semibold text-sm">🔢 NAT (Numerical Answer Type) - 8 Questions</p>
+                  <p className="text-xs text-gray-600 mt-1">+4 marks for correct answer | 0 for wrong/unattempted | Max: 32 marks</p>
+                </div>
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <p className="font-semibold text-sm">☑️ MSQ (Multiple Select Question) - 10 Questions</p>
+                  <p className="text-xs text-gray-600 mt-1">+4 for all correct | Partial marks for partially correct | -1 if any selected option is wrong | 0 for unattempted | Max: 40 marks</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <p className="font-semibold text-sm">✓ MCQ (Multiple Choice Question) - 26 Questions</p>
+                  <p className="text-xs text-gray-600 mt-1">+3 for correct | -0.5 for wrong | 0 for unattempted | Max: 78 marks</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 mb-2 text-sm">⚠️ Important Note</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                While we've done our best to make this calculator accurate, the final score shown is an estimate. 
+                The accuracy depends on how well your PDF was parsed and how clearly the text could be extracted. 
+                Small variations might occur if the PDF quality is poor or if the text layout is unusual. Always 
+                cross-check with official results when they're released.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
         <div className="text-center text-white text-sm py-4">
           <p>© 2026 CEED Score Calculator | Results are for reference only</p>
