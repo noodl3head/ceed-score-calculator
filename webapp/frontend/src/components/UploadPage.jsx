@@ -60,7 +60,8 @@ const UploadPage = ({ onScoreCalculated }) => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/calculate-score', formData, {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const response = await axios.post(`${apiUrl}/api/calculate-score`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
