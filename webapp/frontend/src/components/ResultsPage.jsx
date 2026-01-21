@@ -70,6 +70,9 @@ const ResultsPage = ({ scoreData, onReset }) => {
                 ></div>
               </div>
             </div>
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              ⚠️ This is an estimate only. The final score may vary slightly due to potential errors in PDF parsing and calculation.
+            </p>
           </div>
         </div>
 
