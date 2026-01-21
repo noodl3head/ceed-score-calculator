@@ -136,7 +136,7 @@ def parse_response_text(filename):
         q_text = q_text_match.group(1).strip() if q_text_match else ""
         
         answer_match = re.search(r'Answer\s*:(.*?)(?=\s*Question ID|Status|$)', q_block, re.DOTALL)
-        chosen_option_match = re.search(r'Chosen Option\s*:(.*?)(?=\s*Q\.\d+|$)', q_block, re.DOTALL)
+        chosen_option_match = re.search(r'Chosen Option\s*:([^\n]*)', q_block)
         status_match = re.search(r'Status\s*:(.*?)(?=\s*Given|Options|Question ID|Answer|Chosen Option|$)', q_block, re.DOTALL)
         
         q_info = {
@@ -151,28 +151,27 @@ def parse_response_text(filename):
         if q_info["chosen_options"]:
             raw = q_info["chosen_options"].strip()
             
-            # Pattern 1: Answer followed by timestamp like "31/20/26" or "41/20/26"
-            # Extract only valid answer patterns (single digit, comma-separated digits, or --)
-            match = re.match(r'^([\d,\s]+?)(?=\d/\d+/\d+|http|cdn)', raw)
-            if match:
-                cleaned = match.group(1).strip()
-            else:
-                # Pattern 2: Clean answer without contamination
-                # Take everything before newline, http, or excessive whitespace
-                cleaned = re.split(r'\n|http|cdn\.digialm', raw)[0].strip()
-                # Remove any trailing timestamp patterns
-                cleaned = re.sub(r'\s*\d+/\d+/\d+.*$', '', cleaned)
+            # First, remove any trailing date/timestamp patterns and URLs
+            cleaned = re.sub(r'\s*\d{1,2}/\d{1,2}/\d{2,4}.*$', '', raw)
+            cleaned = re.sub(r'\s*http.*$', '', cleaned)
+            cleaned = re.sub(r'\s*cdn\..*$', '', cleaned)
             
-            # Remove trailing commas and whitespace
+            # Remove any text after the first valid answer pattern
+            # Valid patterns: digits with optional commas/spaces (1,3 or 13 or 4,2 or 42), or --
+            match = re.match(r'^([\d,\s]+|--|\d+)(?:\s|$)', cleaned)
+            if match:
+                cleaned = match.group(1)
+            
+            # Remove all whitespace
+            cleaned = re.sub(r'\s+', '', cleaned)
             cleaned = cleaned.rstrip(',').strip()
             
             # Check if it's a valid answer format
             if not cleaned or cleaned == '--' or cleaned.startswith('--'):
                 q_info["chosen_options"] = "--"
-            # Validate it's only digits and commas (valid answer format)
-            elif re.match(r'^[\d,\s]+$', cleaned):
-                # Remove extra spaces within the answer
-                cleaned = re.sub(r'\s+', '', cleaned)
+            # Accept any combination of digits 1-4 (with or without commas)
+            # This includes: 1, 1,3, 13, 42, 123, 1,2,3 etc.
+            elif re.match(r'^[1-4,]+$', cleaned) and re.search(r'[1-4]', cleaned):
                 q_info["chosen_options"] = cleaned
             else:
                 # Invalid format, treat as unanswered
@@ -188,9 +187,15 @@ def calculate_msq_score(correct_keys, chosen_keys, status=""):
     if status == "Not Answered" or not chosen_keys or chosen_keys == "--":
         return 0
     
-    chosen_raw = chosen_keys.split(',')
+    # Handle both comma-separated (1,3) and consecutive digits (13 or 42)
+    if ',' in chosen_keys:
+        chosen_raw = chosen_keys.split(',')
+    else:
+        # Split consecutive digits: "42" -> ["4", "2"], "123" -> ["1", "2", "3"]
+        chosen_raw = list(chosen_keys)
+    
     map_dict = {"1": "A", "2": "B", "3": "C", "4": "D"}
-    chosen = {map_dict.get(c.strip(), c.strip()) for c in chosen_raw if c.strip()}
+    chosen = {map_dict.get(c.strip(), c.strip()) for c in chosen_raw if c.strip() and c.strip() in map_dict}
     
     if not chosen: return 0
     correct = set(correct_keys)
@@ -217,6 +222,13 @@ def calculate_msq_score(correct_keys, chosen_keys, status=""):
 def calculate_mcq_score(correct_key, chosen_option, status=""):
     if status == "Not Answered" or not chosen_option or chosen_option == "--":
         return 0
+    
+    # MCQ should only have ONE option - reject multi-digit or comma-separated answers
+    # Valid: "1", "2", "3", "4"
+    # Invalid: "42", "12", "1,2", etc.
+    if len(chosen_option) > 1 or ',' in chosen_option:
+        # Multi-digit or multiple options for MCQ = wrong answer
+        return -0.5
     
     map_dict = {"1": "A", "2": "B", "3": "C", "4": "D"}
     chosen = map_dict.get(chosen_option.strip(), chosen_option.strip())
