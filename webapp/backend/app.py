@@ -289,7 +289,7 @@ def calculate_score_endpoint():
         section_details_formatted = {
             "NAT Section": {
                 "score": score_data["section_scores"]["NAT"]["total"],
-                "max_score": 40,
+                "max_score": 32,
                 "correct": score_data["section_scores"]["NAT"]["correct"],
                 "wrong": score_data["section_scores"]["NAT"]["wrong"],
                 "unattempted": score_data["section_scores"]["NAT"]["unattempted"]
@@ -303,7 +303,7 @@ def calculate_score_endpoint():
             },
             "MCQ Section": {
                 "score": score_data["section_scores"]["MCQ"]["total"],
-                "max_score": 70,
+                "max_score": 78,
                 "correct": score_data["section_scores"]["MCQ"]["correct"],
                 "wrong": score_data["section_scores"]["MCQ"]["wrong"],
                 "unattempted": score_data["section_scores"]["MCQ"]["unattempted"]
