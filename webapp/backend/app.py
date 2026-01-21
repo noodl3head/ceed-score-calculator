@@ -286,8 +286,11 @@ def calculate_score_endpoint():
         # Extract student info
         name, student_id = extract_student_info(tmp_path)
         
+        # Use default values if extraction fails - score can still be calculated
         if not student_id:
-            return jsonify({"error": "Could not extract student ID from PDF"}), 400
+            student_id = "Unknown"
+        if not name or name == "Unknown":
+            name = "Anonymous"
         
         # Calculate score
         score_data = calculate_score_from_pdf(tmp_path)
