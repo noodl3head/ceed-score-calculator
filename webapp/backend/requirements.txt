@@ -4,3 +4,4 @@ pypdf==3.17.4
 supabase==2.7.4
 python-dotenv==1.0.0
 werkzeug==3.0.1
+gunicorn==21.2.0
