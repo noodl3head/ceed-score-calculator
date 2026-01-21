@@ -86,8 +86,9 @@ def calculate_score_from_pdf(pdf_path):
     reader = PdfReader(pdf_path)
     content = ""
     for i, page in enumerate(reader.pages):
+        page_text = page.extract_text() or ""
         content += f"--- Page {i+1} ---\n"
-        content += page.extract_text()
+        content += page_text
         content += "\n\n"
     
     # Parse using existing logic
@@ -214,7 +215,7 @@ def parse_response_with_content(content):
         q_text = q_text_match.group(1).strip() if q_text_match else ""
         
         answer_match = re.search(r'Answer\s*:(.*?)(?=\s*Question ID|Status|$)', q_block, re.DOTALL)
-        chosen_option_match = re.search(r'Chosen Option\s*:([^\n]*)', q_block)
+        chosen_option_match = re.search(r'Chosen Option\s*:(.*?)(?=\s*Q\.\d+|$)', q_block, re.DOTALL)
         status_match = re.search(r'Status\s*:(.*?)(?=\s*Given|Options|Question ID|Answer|Chosen Option|$)', q_block, re.DOTALL)
         
         q_info = {
@@ -228,31 +229,21 @@ def parse_response_with_content(content):
         # Clean chosen_options
         if q_info["chosen_options"]:
             raw = q_info["chosen_options"].strip()
-            
-            # First, remove any trailing date/timestamp patterns and URLs
-            cleaned = re.sub(r'\s*\d{1,2}/\d{1,2}/\d{2,4}.*$', '', raw)
-            cleaned = re.sub(r'\s*http.*$', '', cleaned)
-            cleaned = re.sub(r'\s*cdn\..*$', '', cleaned)
-            
-            # Remove any text after the first valid answer pattern
-            # Valid patterns: digits with optional commas/spaces (1,3 or 13 or 4,2 or 42), or --
-            match = re.match(r'^([\d,\s]+|--|\d+)(?:\s|$)', cleaned)
+            match = re.match(r'^([\d,\s]+?)(?=\d/\d+/\d+|http|cdn)', raw)
             if match:
-                cleaned = match.group(1)
+                cleaned = match.group(1).strip()
+            else:
+                cleaned = re.split(r'\n|http|cdn\.digialm', raw)[0].strip()
+                cleaned = re.sub(r'\s*\d+/\d+/\d+.*$', '', cleaned)
             
-            # Remove all whitespace
-            cleaned = re.sub(r'\s+', '', cleaned)
             cleaned = cleaned.rstrip(',').strip()
             
-            # Check if it's a valid answer format
             if not cleaned or cleaned == '--' or cleaned.startswith('--'):
                 q_info["chosen_options"] = "--"
-            # Accept any combination of digits 1-4 (with or without commas)
-            # This includes: 1, 1,3, 13, 42, 123, 1,2,3 etc.
-            elif re.match(r'^[1-4,]+$', cleaned) and re.search(r'[1-4]', cleaned):
+            elif re.match(r'^[\d,\s]+$', cleaned):
+                cleaned = re.sub(r'\s+', '', cleaned)
                 q_info["chosen_options"] = cleaned
             else:
-                # Invalid format, treat as unanswered
                 q_info["chosen_options"] = "--"
                 
         current_section.append(q_info)
@@ -294,6 +285,15 @@ def calculate_score_endpoint():
         
         # Calculate score
         score_data = calculate_score_from_pdf(tmp_path)
+        
+        # Check if PDF is actually a valid response sheet
+        # If all answers are N/A and no questions were matched, it's likely not a response sheet
+        answered_count = sum(1 for r in score_data["results"] if r["user_ans"] not in ["N/A", "--", None, ""])
+        if answered_count == 0:
+            os.unlink(tmp_path)
+            return jsonify({
+                "error": "No answers could be extracted from this PDF. This usually happens when the PDF contains images instead of text. Please make sure you're saving your response sheet using the browser's 'Print' option and selecting 'Save as PDF' - do not use screenshot or download as image."
+            }), 400
         
         # Clean up temp file
         os.unlink(tmp_path)
