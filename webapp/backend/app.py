@@ -215,7 +215,8 @@ def parse_response_with_content(content):
         q_text = q_text_match.group(1).strip() if q_text_match else ""
         
         answer_match = re.search(r'Answer\s*:(.*?)(?=\s*Question ID|Status|$)', q_block, re.DOTALL)
-        chosen_option_match = re.search(r'Chosen Option\s*:(.*?)(?=\s*Q\.\d+|$)', q_block, re.DOTALL)
+        # Use a more restrictive regex - stop at newline or next field
+        chosen_option_match = re.search(r'Chosen Option\s*:\s*([^\n]+)', q_block)
         status_match = re.search(r'Status\s*:(.*?)(?=\s*Given|Options|Question ID|Answer|Chosen Option|$)', q_block, re.DOTALL)
         
         q_info = {
@@ -226,25 +227,34 @@ def parse_response_with_content(content):
             "chosen_options": chosen_option_match.group(1).strip() if chosen_option_match else None
         }
         
-        # Clean chosen_options
+        # Clean chosen_options - extract only valid option digits (1-4) with optional commas
         if q_info["chosen_options"]:
             raw = q_info["chosen_options"].strip()
-            match = re.match(r'^([\d,\s]+?)(?=\d/\d+/\d+|http|cdn)', raw)
-            if match:
-                cleaned = match.group(1).strip()
-            else:
-                cleaned = re.split(r'\n|http|cdn\.digialm', raw)[0].strip()
-                cleaned = re.sub(r'\s*\d+/\d+/\d+.*$', '', cleaned)
             
-            cleaned = cleaned.rstrip(',').strip()
-            
-            if not cleaned or cleaned == '--' or cleaned.startswith('--'):
+            # Check for unanswered
+            if raw == '--' or raw.startswith('--'):
                 q_info["chosen_options"] = "--"
-            elif re.match(r'^[\d,\s]+$', cleaned):
-                cleaned = re.sub(r'\s+', '', cleaned)
-                q_info["chosen_options"] = cleaned
             else:
-                q_info["chosen_options"] = "--"
+                # Extract valid answer patterns - digits 1-4 with optional commas
+                # Also accept consecutive digits like "24" or "134" (comma may have been lost in PDF parsing)
+                
+                # First, try to match comma-separated pattern like "1,3" or "1, 3"
+                comma_match = re.match(r'^([1-4](?:\s*,\s*[1-4])*)', raw)
+                if comma_match:
+                    # Found comma-separated values
+                    cleaned = comma_match.group(1)
+                    # Normalize: remove spaces around commas
+                    cleaned = re.sub(r'\s*,\s*', ',', cleaned)
+                    q_info["chosen_options"] = cleaned
+                else:
+                    # Try consecutive digits (1-4 only) - comma may have been lost
+                    # Match one or more digits that are all 1-4
+                    consecutive_match = re.match(r'^([1-4]+)', raw)
+                    if consecutive_match:
+                        q_info["chosen_options"] = consecutive_match.group(1)
+                    else:
+                        # Invalid format
+                        q_info["chosen_options"] = "--"
                 
         current_section.append(q_info)
         last_num = curr_num
