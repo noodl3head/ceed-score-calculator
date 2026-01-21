@@ -140,7 +140,7 @@ const UploadPage = ({ onScoreCalculated }) => {
           <button
             onClick={handleUpload}
             disabled={!file || loading}
-            className="w-full bg-gradient-to-r from-primary to-secondary text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+            className="w-full bg-[rgba(17,11,196,1)] hover:bg-[rgba(12,8,147,1)] active:bg-[rgba(10,6,120,1)] text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             {loading ? (
               <>
@@ -151,10 +151,6 @@ const UploadPage = ({ onScoreCalculated }) => {
               <span>Calculate Score</span>
             )}
           </button>
-
-          <div className="text-xs text-gray-500 text-center">
-            Your response sheet will be processed securely and your results will be saved.
-          </div>
         </div>
       </div>
     </div>
