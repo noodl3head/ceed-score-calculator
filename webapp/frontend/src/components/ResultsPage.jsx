@@ -128,7 +128,14 @@ const ResultsPage = ({ scoreData, onReset }) => {
           </h2>
           
           <div className="space-y-4">
-            {Object.entries(question_details).map(([qNum, details]) => {
+            {Object.entries(question_details)
+              .sort(([a], [b]) => {
+                // Extract numeric part from question number (e.g., "Q1" -> 1)
+                const numA = parseInt(a.replace(/\D/g, ''));
+                const numB = parseInt(b.replace(/\D/g, ''));
+                return numA - numB;
+              })
+              .map(([qNum, details]) => {
               const isCorrect = details.score > 0;
               const isWrong = details.score < 0;
               const isPartial = details.score > 0 && details.score < (details.type === 'NAT' ? 4 : details.type === 'MSQ' ? 4 : 3);
