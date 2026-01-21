@@ -210,7 +210,7 @@ const UploadPage = ({ onScoreCalculated }) => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Extract Your Responses</h3>
-                  <p className="text-sm text-gray-600">We read the PDF and extract all your answers for each question.</p>
+                  <p className="text-sm text-gray-600">We read the PDF and extract all your answers for each question. We know the order is shuffled in the response pdf. It is reshuffled to match the question paper order.</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -228,7 +228,7 @@ const UploadPage = ({ onScoreCalculated }) => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Calculate Score</h3>
-                  <p className="text-sm text-gray-600">Points are awarded based on the marking scheme: +4 for NAT, +4/-1 for MSQ, and +3/-0.5 for MCQ.</p>
+                  <p className="text-sm text-gray-600">Points are awarded based on the official marking scheme</p>
                 </div>
               </div>
             </div>
