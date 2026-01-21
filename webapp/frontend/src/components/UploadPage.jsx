@@ -202,24 +202,15 @@ const UploadPage = ({ onScoreCalculated }) => {
             <Download className="h-6 w-6 mr-2" />
             How to Download Your Response Sheet
           </h2>
-          <div className="space-y-4 text-gray-700">
-            <div className="space-y-2">
-              <p className="font-semibold text-gray-900">Step 1: Visit the CEED Portal</p>
-              <p className="text-sm">Go to the official CEED exam portal and log in with your credentials.</p>
-            </div>
-            <div className="space-y-2">
-              <p className="font-semibold text-gray-900">Step 2: Navigate to Response Sheet</p>
-              <p className="text-sm">Find the "Download Response Sheet" or "View Response" section in your candidate dashboard.</p>
-            </div>
-            <div className="space-y-2">
-              <p className="font-semibold text-gray-900">Step 3: Download as PDF</p>
-              <p className="text-sm">Download your response sheet in PDF format. This is the file you'll upload here.</p>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-              <p className="text-sm text-blue-900">
-                <strong>Note:</strong> Make sure the PDF contains your marked responses with clear question numbers and selected options.
-              </p>
-            </div>
+          <div className="w-full">
+            <video 
+              controls 
+              className="w-full rounded-lg shadow-md"
+              preload="metadata"
+            >
+              <source src="/tutorial.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </div>
