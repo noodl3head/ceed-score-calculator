@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { Upload, FileText, Loader2 } from 'lucide-react';
+import { Upload, FileText, Loader2, Download, TestTube } from 'lucide-react';
 
 const UploadPage = ({ onScoreCalculated }) => {
   const [file, setFile] = useState(null);
@@ -75,9 +75,41 @@ const UploadPage = ({ onScoreCalculated }) => {
     }
   };
 
+  const handleTrySample = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Fetch the sample PDF
+      const response = await fetch('/sample-response.pdf');
+      const blob = await response.blob();
+      const sampleFile = new File([blob], 'sample-response.pdf', { type: 'application/pdf' });
+      
+      setFile(sampleFile);
+      
+      // Automatically upload the sample
+      const formData = new FormData();
+      formData.append('file', sampleFile);
+      
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const apiResponse = await axios.post(`${apiUrl}/api/calculate-score`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      onScoreCalculated(apiResponse.data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to load sample. Please try again.');
+      setFile(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-2xl space-y-6">
         <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-6">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -151,6 +183,44 @@ const UploadPage = ({ onScoreCalculated }) => {
               <span>Calculate Score</span>
             )}
           </button>
+
+          <div className="text-center">
+            <button
+              onClick={handleTrySample}
+              disabled={loading}
+              className="text-sm text-blue-600 hover:text-blue-800 underline disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto space-x-1"
+            >
+              <TestTube className="h-4 w-4" />
+              <span>Try with sample response sheet</span>
+            </button>
+          </div>
+        </div>
+
+        {/* How to Download Section */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+            <Download className="h-6 w-6 mr-2" />
+            How to Download Your Response Sheet
+          </h2>
+          <div className="space-y-4 text-gray-700">
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900">Step 1: Visit the CEED Portal</p>
+              <p className="text-sm">Go to the official CEED exam portal and log in with your credentials.</p>
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900">Step 2: Navigate to Response Sheet</p>
+              <p className="text-sm">Find the "Download Response Sheet" or "View Response" section in your candidate dashboard.</p>
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900">Step 3: Download as PDF</p>
+              <p className="text-sm">Download your response sheet in PDF format. This is the file you'll upload here.</p>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <p className="text-sm text-blue-900">
+                <strong>Note:</strong> Make sure the PDF contains your marked responses with clear question numbers and selected options.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
