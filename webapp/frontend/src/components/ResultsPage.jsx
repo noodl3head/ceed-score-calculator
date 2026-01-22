@@ -271,16 +271,16 @@ const ResultsPage = ({ scoreData, onReset }) => {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-white text-sm py-4">
-          <p>© 2026 CEED Score Calculator | Results are for reference only</p>
+        <div className="text-center text-gray-700 text-sm py-4">
+          <p className="font-medium">© 2026 CEED Score Calculator | Results are for reference only</p>
           <div className="mt-4">
-            <p className="text-xs text-gray-300 mb-2">Follow the developer</p>
+            <p className="text-sm text-gray-600 mb-2">Follow the developer</p>
             <div className="flex justify-center space-x-4">
               <a 
                 href="https://www.linkedin.com/in/rohith-narasimhan-a16657220/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-300 hover:text-blue-100 transition-colors"
+                className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
               >
                 LinkedIn
               </a>
@@ -288,7 +288,7 @@ const ResultsPage = ({ scoreData, onReset }) => {
                 href="https://www.instagram.com/rohithwokeup/?hl=en" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-pink-300 hover:text-pink-100 transition-colors"
+                className="text-pink-600 hover:text-pink-800 font-medium transition-colors"
               >
                 Instagram
               </a>

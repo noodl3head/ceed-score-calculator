@@ -73,7 +73,7 @@ const ScoreChart = ({ userScore }) => {
   // Find user's position
   const userPosition = allScores.findIndex(score => Math.abs(score - userScore) < 0.01) + 1;
   const totalScores = allScores.length;
-  const percentile = userPosition ? Math.round(((totalScores - userPosition + 1) / totalScores) * 100) : null;
+  const percentile = userPosition ? Math.round((userPosition / totalScores) * 100) : null;
 
   // Custom dot renderer to highlight user's score
   const CustomDot = (props) => {
