@@ -348,6 +348,11 @@ def calculate_score_endpoint():
                 "score": q["score"]
             }
         
+        # Count N/A answers to detect potential PDF parsing issues
+        # Note: "--" is valid (officially marked as unattempted), only count "N/A" (parsing failures)
+        na_count = sum(1 for r in score_data["results"] if r["user_ans"] == "N/A")
+        has_many_na = na_count > 10  # Threshold: more than 10 N/As suggests parsing issues
+        
         # Prepare response for frontend
         result = {
             "student_info": {
@@ -361,7 +366,11 @@ def calculate_score_endpoint():
                 "mcq_score": score_data["section_scores"]["MCQ"]["total"]
             },
             "section_details": section_details_formatted,
-            "question_details": question_details_formatted
+            "question_details": question_details_formatted,
+            "warning": {
+                "has_many_na": has_many_na,
+                "na_count": na_count
+            }
         }
         
         # Store in Supabase if configured

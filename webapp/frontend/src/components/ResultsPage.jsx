@@ -3,7 +3,7 @@ import { CheckCircle, XCircle, MinusCircle, RefreshCw, Trophy, Target } from 'lu
 import ScoreChart from './ScoreChart';
 
 const ResultsPage = ({ scoreData, onReset }) => {
-  const { student_info, scores, section_details, question_details } = scoreData;
+  const { student_info, scores, section_details, question_details, warning } = scoreData;
 
   const getSectionIcon = (sectionName) => {
     if (sectionName.includes('NAT')) return '🔢';
@@ -127,6 +127,36 @@ const ResultsPage = ({ scoreData, onReset }) => {
 
         {/* Score Distribution Chart */}
         <ScoreChart userScore={scores.total_score} />
+
+        {/* Warning Section for Many N/As */}
+        {warning?.has_many_na && (
+          <div className="bg-red-50 border-2 border-red-200 rounded-2xl shadow-2xl p-6 md:p-8">
+            <h2 className="text-xl md:text-2xl font-bold text-red-900 mb-4">
+              🚨 Do you think the result is incorrect?
+            </h2>
+            <p className="text-gray-700 mb-4">
+              We detected <span className="font-bold text-red-600">{warning.na_count} N/A answers</span> in your response sheet. 
+              This usually happens when the PDF doesn't contain proper text data (e.g., it's an image or screenshot).
+            </p>
+            <p className="text-gray-700 mb-6">
+              <span className="font-semibold">Follow this video tutorial</span> to learn how to correctly save your PDF response sheet:
+            </p>
+            <div className="bg-white rounded-lg p-4 shadow-inner">
+              <video 
+                className="w-full max-w-2xl mx-auto rounded-lg shadow-lg"
+                controls
+                preload="metadata"
+              >
+                <source src="/tutorial.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <p className="text-sm text-gray-600 mt-3 text-center">
+                💡 <span className="font-semibold">Pro Tip:</span> Use your browser's "Print" function and select "Save as PDF" 
+                instead of taking screenshots or using "Download as Image".
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Question Details */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
