@@ -7,6 +7,10 @@ from datetime import datetime
 from supabase import create_client, Client
 from werkzeug.utils import secure_filename
 import tempfile
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -413,6 +417,27 @@ def get_score(student_id):
             return jsonify({"error": "Score not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/scores', methods=['GET'])
+def get_all_scores():
+    """Get all total scores for chart display"""
+    if not supabase:
+        # Return empty array instead of error when DB not configured
+        return jsonify({"scores": [], "message": "Database not configured"}), 200
+    
+    try:
+        # Fetch only total_score from all records, ordered by total_score
+        result = supabase.table('scores').select('total_score').order('total_score', desc=False).execute()
+        if result.data:
+            # Extract just the scores as a list
+            scores = [item['total_score'] for item in result.data]
+            return jsonify({"scores": scores}), 200
+        else:
+            return jsonify({"scores": []}), 200
+    except Exception as e:
+        print(f"Error fetching scores: {e}")
+        # Return empty array on error so frontend doesn't break
+        return jsonify({"scores": [], "error": str(e)}), 200
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

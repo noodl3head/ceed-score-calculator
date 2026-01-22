@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle, XCircle, MinusCircle, RefreshCw, Trophy, Target } from 'lucide-react';
+import ScoreChart from './ScoreChart';
 
 const ResultsPage = ({ scoreData, onReset }) => {
   const { student_info, scores, section_details, question_details } = scoreData;
@@ -123,6 +124,9 @@ const ResultsPage = ({ scoreData, onReset }) => {
             ))}
           </div>
         </div>
+
+        {/* Score Distribution Chart */}
+        <ScoreChart userScore={scores.total_score} />
 
         {/* Question Details */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
