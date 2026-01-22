@@ -427,7 +427,7 @@ def get_all_scores():
     
     try:
         # Fetch only total_score from all records, ordered by total_score
-        result = supabase.table('scores').select('total_score').order('total_score', desc=False).execute()
+        result = supabase.table('scores').select('total_score').order('total_score', desc=True).execute()
         if result.data:
             # Extract just the scores as a list
             scores = [item['total_score'] for item in result.data]
