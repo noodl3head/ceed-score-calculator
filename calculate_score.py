@@ -6,7 +6,7 @@ OFFICIAL_ANSWERS = {
     1: {"type": "NAT", "range": [6.0, 6.5]},
     2: {"type": "NAT", "range": [126.0, 128.0]},
     3: {"type": "NAT", "range": [24.0, 25.5]},
-    4: {"type": "NAT", "value": 18.0},
+    4: {"type": "NAT", "value": 19.0},
     5: {"type": "NAT", "value": 19.0},
     6: {"type": "NAT", "value": 4.0},
     7: {"type": "NAT", "value": 2.0},
@@ -46,7 +46,7 @@ OFFICIAL_ANSWERS = {
     39: {"type": "MCQ", "key": "B"},
     40: {"type": "MCQ", "key": "A"},
     41: {"type": "MCQ", "key": "C"},
-    42: {"type": "MCQ", "key": "C"},
+    42: {"type": "MCQ", "key": "B"},
     43: {"type": "MCQ", "key": "B"},
     44: {"type": "MCQ", "key": "B"},
 }
