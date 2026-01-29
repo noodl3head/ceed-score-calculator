@@ -3,13 +3,13 @@
 Compare current OFFICIAL_ANSWERS with the new answer key PDF
 """
 
-# New answer key from CEED_2026_Answer_Key.pdf
+# New answer key from CEED_2026_Answer_Key (1).pdf
 NEW_ANSWER_KEY = {
     # Section I: NAT
     1: {"type": "NAT", "range": [6.0, 6.5]},
     2: {"type": "NAT", "range": [126.0, 128.0]},
     3: {"type": "NAT", "range": [24.0, 25.5]},
-    4: {"type": "NAT", "value": 19.0},  # CHANGED from 18.0
+    4: {"type": "NAT", "value": 18.0},  # Back to 18.0
     5: {"type": "NAT", "value": 19.0},
     6: {"type": "NAT", "value": 4.0},
     7: {"type": "NAT", "value": 2.0},

@@ -6,7 +6,7 @@ OFFICIAL_ANSWERS = {
     1: {"type": "NAT", "range": [6.0, 6.5]},
     2: {"type": "NAT", "range": [126.0, 128.0]},
     3: {"type": "NAT", "range": [24.0, 25.5]},
-    4: {"type": "NAT", "value": 19.0},
+    4: {"type": "NAT", "value": 18.0},
     5: {"type": "NAT", "value": 19.0},
     6: {"type": "NAT", "value": 4.0},
     7: {"type": "NAT", "value": 2.0},

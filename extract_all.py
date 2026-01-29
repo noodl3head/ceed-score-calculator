@@ -8,5 +8,5 @@ def extract_text(filename, out_file):
             f.write(page.extract_text())
             f.write("\n\n")
 
-extract_text("CEED_2026_Answer_Key.pdf", "answer_key_text.txt")
+extract_text("CEED_2026_Answer_Key (1).pdf", "answer_key_text.txt")
 extract_text("response.pdf", "response_text.txt")
